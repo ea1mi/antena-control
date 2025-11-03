@@ -1,0 +1,214 @@
+body {
+    font-family: sans-serif;
+    font-size: 14px;
+    background-color: black;
+    color: burlywood;
+}
+
+#contenor {
+    margin: 0 auto;
+    width: 95%;
+    max-width: 1300px;
+}
+
+iframe {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: black;
+    border: none;
+}
+
+.tablestn {
+    margin: 0 auto;
+    background-color: black;
+    border: 1px solid white;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.tdstn {
+    padding: 1px;
+}
+
+.spanry {
+    border: 1px solid rgba(143, 143, 143, 0.8);
+    text-align: center;
+    line-height: 27px;
+    display: inline-block;
+    background-color: rgba(255,0,0,0.2);
+    color: white;
+    width: 70px;
+    height: 25px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.spanoff {
+    border: 1px solid rgba(255,0,0,0.8);
+    background-color: rgba(255,0,0,0.2);
+    color: rgba(255,0,0,1);
+}
+
+.spanon {
+    border: 1px solid rgba(0,200,0,0.8);
+    background-color: rgba(0,255,0,0.3);
+    color: rgba(0,200,0,1);
+}
+
+/* Separador */
+.separator {
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 5px;
+}
+
+.separator strong {
+    color: burlywood;
+    font-size: 12px;
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.separator hr {
+    border: 1px solid burlywood;
+    margin: 0 auto;
+    width: 100%; /* opcional, reduce el ancho */
+}
+
+#statusbar {
+    display: flex;
+    justify-content: space-between; /* fecha a la izquierda, datos a la derecha */
+    align-items: center;
+    width: 100%;
+}
+
+#ts {
+    color: burlywood;
+}
+
+.sysinfo {
+    color: lightgreen;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.section-title {
+    display: block;
+    text-align: center;
+    color: burlywood;
+    font-size: 14px;
+    font-weight: normal;     /* opcional, puedes cambiar a normal o 600 */
+    letter-spacing: 0px;
+    margin-bottom: 1px;
+    text-transform: uppercase; /* opcional: pone el texto en mayúsculas */
+}
+
+/* ?? Enlaces de los botones (sin subrayado ni color morado) */
+a {
+    text-decoration: none;      /* elimina la línea inferior */
+    color: inherit;             /* usa el color del texto del botón */
+}
+
+a:visited {
+    color: inherit;             /* evita el color morado tras hacer clic */
+}
+
+a:hover, a:active {
+    text-decoration: none;      /* sin subrayado al pasar o pulsar */
+}
+
+/* Parpadeo de desconexión MQTT */
+@keyframes flickerAnimation {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.FinFout {
+   animation: flickerAnimation 1s infinite;
+}
+
+/* ?? Vista web (pantallas grandes) */
+@media (min-width: 1025px) {
+    #contenor {
+        width: 98%;
+        max-width: 1300px;        /* contenedor más ancho */
+        transform: scale(0.9);   /* ?? agranda todo el contenido visualmente */
+        transform-origin: top center; /* mantiene centrado el zoom */
+    }
+
+    body {
+        font-size: 16px;          /* texto general más grande */
+    }
+
+    .spanry {
+        width: 100px;
+        height: 35px;
+        line-height: 35px;
+        font-size: 16px;
+    }
+
+    .section-title {
+        font-size: 16px;
+        letter-spacing: 1px;
+    }
+
+    .sysinfo {
+        font-size: 14px;
+    }
+}
+
+/* ?? Diseño responsive para móviles y tablets */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    #contenor {
+        width: 95%;
+    }
+
+    .tablestn {
+        width: 100%;
+        border: 1px solid white;      /* ? mantiene el borde blanco */
+        border-radius: 3px;           /* ? mantiene esquinas redondeadas */
+        background-color: black;      /* mantiene el fondo oscuro */
+        padding: 5px;
+    }
+
+    .tdstn {
+        display: block;
+        width: 100%;
+        padding: 6px 0;
+        text-align: center;
+    }
+
+    .spanry {
+        width: 90%;                  /* más ancho en móviles */
+        height: 45px;                /* botones más altos */
+        font-size: 20px;             /* texto más grande */
+        line-height: 45px;           /* centra verticalmente el texto */
+        text-align: center;          /* centra horizontalmente el texto */
+        margin: 5px auto;            /* centra los botones */
+        display: block;              /* cada botón en una línea */
+        border: 1px solid rgba(143, 143, 143, 0.8); /* ? mantiene borde visible */
+        border-radius: 3px;
+    }
+
+    .section-title {
+        font-size: 14px;
+        margin-top: 6px;
+    }
+
+    #statusbar {
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .sysinfo {
+        font-size: 13px;
+    }
+}
