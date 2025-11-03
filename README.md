@@ -1,4 +1,4 @@
-<img width="406" height="174" alt="image" src="https://github.com/user-attachments/assets/f8cb16e3-b5ac-4194-aba3-45eb0f2f08c4" /># Antena-Control
+# Antena-Control
 Proyecto selector de antenas HF.
 
 A través de un proyecto de selector de antenas con relés diseñado por mi amigo EB1TR Fabian. He ido mejorando y adaptando esto para mi uso.
