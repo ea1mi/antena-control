@@ -50,6 +50,15 @@ iframe {
     color: rgba(255,0,0,1);
 }
 
+/* Estado intermedio (transición) */
+.spanwait {
+  background-color: orange;
+  color: white;
+  border: 2px solid #d17b00;
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
 .spanon {
     border: 1px solid rgba(0,200,0,0.8);
     background-color: rgba(0,255,0,0.3);
@@ -181,7 +190,7 @@ a:hover, a:active {
     .tdstn {
         display: block;
         width: 100%;
-        padding: 6px 0;
+        padding: 0px 0;
         text-align: center;
     }
 

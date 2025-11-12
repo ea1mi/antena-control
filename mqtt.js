@@ -49,6 +49,7 @@ function onConnect() {
     client.subscribe(`${base_topic}/system`);
     client.subscribe(tasmota_topic_stat);
     client.subscribe(tasmota_topic_result);
+    client.subscribe("proxmox/vm/status/#");
 
     // Solicitar estado inicial del Tasmota
     const status_request = new Paho.MQTT.Message("");
@@ -100,6 +101,13 @@ function onMessageArrived(message) {
     // ---- Mensajes del Tasmota (fuente) ----
     if (topic === tasmota_topic_stat || topic === tasmota_topic_result) {
         handleTasmotaMessage(topic, payload);
+    }
+
+    // ---- Mensajes de la VM ----
+    if (message.destinationName.startsWith("proxmox/vm/status/")) {
+        const vmid = message.destinationName.split("/").pop();
+        const payload = message.payloadString.trim();
+        update_vm_status(vmid, payload);
     }
 }
 
@@ -179,5 +187,118 @@ function handleTasmotaMessage(topic, payload) {
         console.log("?? Estado Tasmota:", tasmota_state ? "ON" : "OFF");
     } catch (e) {
         console.warn("?? Error al procesar mensaje Tasmota:", payload);
+    }
+}
+
+
+/************************************************************
+ * PCRadio (VM 100) - Control con estado intermedio (🟠)
+ ************************************************************/
+let vm_state = "unknown";
+const vmid_pcradio = "100";
+
+function toggle_vm(vmid) {
+    const el = $("#vm" + vmid);
+    if (vm_state === "stopped" || vm_state === "unknown") {
+        // Mostrar estado transitorio (encendiendo)
+        el.removeClass("spanoff").addClass("spanwait");
+        vm_state = "starting";
+
+        const msg = new Paho.MQTT.Message(vmid.toString());
+        msg.destinationName = "proxmox/vm/start";
+        client.send(msg);
+        console.log("🟡 Solicitando arranque de VM " + vmid);
+    } else if (vm_state === "started") {
+        if (confirm("¿Seguro que deseas apagar PCRadio (VM " + vmid + ")?")) {
+            // Mostrar estado transitorio (apagando)
+            el.removeClass("spanon").addClass("spanwait");
+            vm_state = "stopping";
+
+            const msg = new Paho.MQTT.Message(vmid.toString());
+            msg.destinationName = "proxmox/vm/stop";
+            client.send(msg);
+            console.log("🟠 Solicitando apagado de VM " + vmid);
+        }
+    }
+}
+
+// Actualiza el color del botón según estado recibido
+function update_vm_status(vmid, status) {
+    vm_state = status;
+    const el = $("#vm" + vmid);
+    el.removeClass("spanon spanoff spanwait");
+
+    switch (status) {
+        case "started":
+            el.addClass("spanon");
+            break;
+        case "stopped":
+            el.addClass("spanoff");
+            break;
+        case "starting":
+        case "stopping":
+            el.addClass("spanwait");
+            break;
+        default:
+            el.addClass("spanoff");
+    }
+    console.log(`💬 Estado PCRadio (VM ${vmid}): ${status}`);
+}
+
+
+// Al conectar al broker MQTT
+function onConnect() {
+    console.log("✅ Conectado a MQTT.");
+    $("#contenor").removeClass("FinFout");
+
+    // Suscripciones existentes
+    for (let i = 1; i <= 8; i++) {
+        client.subscribe(`${base_topic}/out/r${i}`);
+    }
+    client.subscribe(`${base_topic}/system`);
+    client.subscribe(tasmota_topic_stat);
+    client.subscribe(tasmota_topic_result);
+    client.subscribe("proxmox/vm/status/#");
+
+    // Solicitar estado inicial del Tasmota
+    const status_request = new Paho.MQTT.Message("");
+    status_request.destinationName = tasmota_topic_cmd;
+    client.send(status_request);
+
+    // 🔹 Solicitar estado actual de la VM al iniciar
+    const msg = new Paho.MQTT.Message(vmid_pcradio);
+    msg.destinationName = "proxmox/vm/query";
+    client.send(msg);
+    console.log("📡 Solicitando estado inicial de PCRadio...");
+}
+
+// Procesar mensajes de estado de VM
+function onMessageArrived(message) {
+    const now = new Date();
+    const topic = message.destinationName;
+    const payload = message.payloadString.trim();
+    $("#ts").text(now.toLocaleString());
+
+    // ---- Estado relés ----
+    if (topic.startsWith(base_topic + "/out/")) {
+        const ry = topic.split("/")[3];
+        updateRelayState(ry, payload === "ON");
+    }
+
+    // ---- Datos sistema ----
+    if (topic.endsWith("/system")) {
+        const [cpu, temp] = payload.split(",");
+        $("#sysdata").html(`CPU: ${cpu}% | Temp: ${temp}&deg;C`);
+    }
+
+    // ---- Fuente alimentación (Tasmota) ----
+    if (topic === tasmota_topic_stat || topic === tasmota_topic_result) {
+        handleTasmotaMessage(topic, payload);
+    }
+
+    // ---- Estado VM ----
+    if (topic.startsWith("proxmox/vm/status/")) {
+        const vmid = topic.split("/").pop();
+        update_vm_status(vmid, payload);
     }
 }
