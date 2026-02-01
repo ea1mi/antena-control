@@ -1,25 +1,25 @@
 /************************************************************
- * CONFIGURACI�N MQTT Y VARIABLES GLOBALES
+ * CONFIGURACIÓN MQTT Y VARIABLES GLOBALES
  ************************************************************/
 const mqttHOST = "192.168.10.21";
 const mqttPORT = 9001;
 const base_topic = "reles/relay13023";
 
-// Estado global de rel�s
+// Estado global de relés
 let relays = { r1: false, r2: false, r3: false, r4: false, r5: false, r6: false, r7: false, r8: false };
 
-// Estado del enchufe Tasmota (fuente de alimentaci�n)
+// Estado del enchufe Tasmota (fuente de alimentación)
 let tasmota_state = false;
 const tasmota_topic_cmd = "cmnd/Smartplug_577019/POWER";
 const tasmota_topic_stat = "stat/Smartplug_577019/POWER";
 const tasmota_topic_result = "stat/Smartplug_577019/RESULT";
 
-// Variables de control de conexi�n
+// Variables de control de conexión
 let lastTasmotaUpdate = Date.now();
 let tasmotaOfflineTimeout = null;
 
 /************************************************************
- * CONEXI�N MQTT
+ * CONEXIÓN MQTT
  ************************************************************/
 const clientID = "web_" + new Date().getUTCMilliseconds();
 const client = new Paho.MQTT.Client(mqttHOST, mqttPORT, clientID);
@@ -34,7 +34,7 @@ client.connect({
 });
 
 /************************************************************
- * EVENTOS DE CONEXI�N
+ * EVENTOS DE CONEXIÓN
  ************************************************************/
 function onConnect() {
     console.log("? Conectado a MQTT.");
@@ -60,11 +60,11 @@ function onConnect() {
 
 function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
-        console.warn("? Conexi�n perdida a MQTT:", responseObject.errorMessage);
+        console.warn("? Conexión perdida a MQTT:", responseObject.errorMessage);
     }
     $("#contenor").addClass("FinFout");
 
-    // Visualmente marcar rel�s como sin estado
+    // Visualmente marcar relés como sin estado
     for (const key in relays) {
         $(`#${key}`)
             .removeClass("spanon spanoff")
@@ -77,7 +77,7 @@ function onConnectionLost(responseObject) {
 }
 
 /************************************************************
- * RECEPCI�N DE MENSAJES
+ * RECEPCIÓN DE MENSAJES
  ************************************************************/
 function onMessageArrived(message) {
     const now = new Date();
@@ -86,7 +86,7 @@ function onMessageArrived(message) {
 
     $("#ts").text(now.toLocaleString());
 
-    // ---- Estado de rel�s ----
+    // ---- Estado de relés ----
     if (topic.startsWith(base_topic + "/out/")) {
         const ry = topic.split("/")[3];
         updateRelayState(ry, payload === "ON");
@@ -158,10 +158,10 @@ function toggle_tasmota() {
 }
 
 /************************************************************
- * GESTI�N DEL ESTADO DEL TASMOTA Y AUTO REFRESH
+ * GESTIÓN DEL ESTADO DEL TASMOTA Y AUTO REFRESH
  ************************************************************/
 function handleTasmotaMessage(topic, payload) {
-    lastTasmotaUpdate = Date.now(); // Marca la hora de �ltimo mensaje recibido
+    lastTasmotaUpdate = Date.now(); // Marca la hora de último mensaje recibido
 
     try {
         let state = payload.toUpperCase();
@@ -174,10 +174,10 @@ function handleTasmotaMessage(topic, payload) {
             }
         }
 
-        // Determinar si est� ON u OFF
+        // Determinar si está ON u OFF
         tasmota_state = (state === "ON");
 
-        // Actualizar color del bot�n F.Alim
+        // Actualizar color del botón F.Alim
         if (tasmota_state) {
             $("#tasmota").removeClass("spanoff").addClass("spanon");
         } else {
@@ -192,7 +192,7 @@ function handleTasmotaMessage(topic, payload) {
 
 
 /************************************************************
- * PCRadio (VM 100) - Control con estado intermedio (🟠)
+ * PCRadio (VM 100) - Control con estado intermedio (ðŸŸ )
  ************************************************************/
 let vm_state = "unknown";
 const vmid_pcradio = "100";
@@ -207,9 +207,9 @@ function toggle_vm(vmid) {
         const msg = new Paho.MQTT.Message(vmid.toString());
         msg.destinationName = "proxmox/vm/start";
         client.send(msg);
-        console.log("🟡 Solicitando arranque de VM " + vmid);
+        console.log("ðŸŸ¡ Solicitando arranque de VM " + vmid);
     } else if (vm_state === "started") {
-        if (confirm("¿Seguro que deseas apagar PCRadio (VM " + vmid + ")?")) {
+        if (confirm("Â¿Seguro que deseas apagar PCRadio (VM " + vmid + ")?")) {
             // Mostrar estado transitorio (apagando)
             el.removeClass("spanon").addClass("spanwait");
             vm_state = "stopping";
@@ -217,12 +217,12 @@ function toggle_vm(vmid) {
             const msg = new Paho.MQTT.Message(vmid.toString());
             msg.destinationName = "proxmox/vm/stop";
             client.send(msg);
-            console.log("🟠 Solicitando apagado de VM " + vmid);
+            console.log("ðŸŸ  Solicitando apagado de VM " + vmid);
         }
     }
 }
 
-// Actualiza el color del botón según estado recibido
+// Actualiza el color del botÃ³n segÃºn estado recibido
 function update_vm_status(vmid, status) {
     vm_state = status;
     const el = $("#vm" + vmid);
@@ -242,13 +242,13 @@ function update_vm_status(vmid, status) {
         default:
             el.addClass("spanoff");
     }
-    console.log(`💬 Estado PCRadio (VM ${vmid}): ${status}`);
+    console.log(`ðŸ’¬ Estado PCRadio (VM ${vmid}): ${status}`);
 }
 
 
 // Al conectar al broker MQTT
 function onConnect() {
-    console.log("✅ Conectado a MQTT.");
+    console.log("âœ… Conectado a MQTT.");
     $("#contenor").removeClass("FinFout");
 
     // Suscripciones existentes
@@ -265,11 +265,11 @@ function onConnect() {
     status_request.destinationName = tasmota_topic_cmd;
     client.send(status_request);
 
-    // 🔹 Solicitar estado actual de la VM al iniciar
+    // ðŸ”¹ Solicitar estado actual de la VM al iniciar
     const msg = new Paho.MQTT.Message(vmid_pcradio);
     msg.destinationName = "proxmox/vm/query";
     client.send(msg);
-    console.log("📡 Solicitando estado inicial de PCRadio...");
+    console.log("ðŸ“¡ Solicitando estado inicial de PCRadio...");
 }
 
 // Procesar mensajes de estado de VM
@@ -279,7 +279,7 @@ function onMessageArrived(message) {
     const payload = message.payloadString.trim();
     $("#ts").text(now.toLocaleString());
 
-    // ---- Estado relés ----
+    // ---- Estado relÃ©s ----
     if (topic.startsWith(base_topic + "/out/")) {
         const ry = topic.split("/")[3];
         updateRelayState(ry, payload === "ON");
@@ -291,7 +291,7 @@ function onMessageArrived(message) {
         $("#sysdata").html(`CPU: ${cpu}% | Temp: ${temp}&deg;C`);
     }
 
-    // ---- Fuente alimentación (Tasmota) ----
+    // ---- Fuente alimentaciÃ³n (Tasmota) ----
     if (topic === tasmota_topic_stat || topic === tasmota_topic_result) {
         handleTasmotaMessage(topic, payload);
     }
