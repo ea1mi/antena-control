@@ -1,64 +1,54 @@
 <!doctype html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selector Antenas EA1MI - Lugas</title>
-
-    <!-- Librerías -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
-    <script src="mqtt.js" type="text/javascript"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"
-            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-            crossorigin="anonymous"></script>
-
-    <!-- Estilos -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selector Antenas EA1MI - Lugas (con cámaras)</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body style="text-align: center">
-    <div id="contenor">
-        <table class="tablestn">
-            <tr>
-                <td colspan="4">
-    		   <div id="statusbar">
-        		<span id="ts">--</span>
-        		<span id="sysdata" class="sysinfo">CPU: -- % | Temp: -- &#176;C</span>
-    		   </div>
-		</td>           
-	    </tr>
-            <tr>
-                <td colspan="4" class="separator">
-                    <span class="section-title">Selector de antenas</span>
-                    <hr>
-                </td>
-            </tr>
+  <div id="contenor">
+    <table class="tablestn">
+      <tr>
+        <td colspan="4">
+          <div id="statusbar">
+            <span id="ts">--</span>
+            <span id="sysdata" class="sysinfo">CPU: -- % \n Temp: -- °C</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="4" class="separator">
+          <span class="section-title">Selector de antenas</span>
+          <hr>
+        </td>
+      </tr>
+      <tr>
+        <td class="tdstn"><a href="#"><span class="spanry" id="r1">WINDOM</span></a></td>
+        <td class="tdstn"><a href="#"><span class="spanry" id="r2">ENDFED</span></a></td>
+        <td class="tdstn"><a href="#"><span class="spanry" id="r3">DIPOLO</span></a></td>
+        <td class="tdstn"><a href="#"><span class="spanry" id="r4">HEXBEAM</span></a></td>
+      </tr>
+      <tr>
+        <td colspan="4" class="separator"><span class="section-title">Encendido</span><hr></td>
+      </tr>
+      <tr>
+        <td class="tdstn" colspan="1"><a href="#"><span class="spanry" id="tasmota">F.Alim</span></a></td>
+        <td class="tdstn" colspan="1"><a href="#"><span class="spanry spanoff" id="vm100">PCRadio</span></a></td>
+      </tr>
+    </table>
+  </div>
 
-            <!-- r1–r4 (enclavables) -->
-            <tr>
-                <td class="tdstn"><a href="#"><span onclick="send_command('r1')" class="spanry" id="r1">WINDOM</span></a></td>
-                <td class="tdstn"><a href="#"><span onclick="send_command('r2')" class="spanry" id="r2">ENDFED</span></a></td>
-                <td class="tdstn"><a href="#"><span onclick="send_command('r3')" class="spanry" id="r3">DIPOLO</span></a></td>
-                <td class="tdstn"><a href="#"><span onclick="send_command('r4')" class="spanry" id="r4">HEXBEAM</span></a></td>
-            </tr>
-
-            <!-- Separador -->
-            <tr>
-                <td colspan="4" class="separator"><span class="section-title">Encendido</span><hr></td>
-            </tr>
-
-            <!-- r5–r8 (sin enclavar) -->
-            <tr>
-		<td class="tdstn" colspan="1"><a href="#"><span onclick="toggle_tasmota()" class="spanry" id="tasmota">F.Alim</span></a></td>
-		<td class="tdstn" colspan="1"><a href="#"><span onclick="toggle_vm('100')" class="spanry spanoff" id="vm100">PCRadio</span></a></td>
-                <!--<td class="tdstn"><a href="#"><span onclick="send_command('r5')" class="spanry" id="r5">--</span></a></td>-->
-                <!--<td class="tdstn"><a href="#"><span onclick="send_command('r6')" class="spanry" id="r6">--</span></a></td>-->
-                <!--<td class="tdstn"><a href="#"><span onclick="send_command('r7')" class="spanry" id="r7">--</span></a></td>-->
-                <!--<td class="tdstn"><a href="#"><span onclick="send_command('r8')" class="spanry" id="r8">--</span></a></td>-->
-            </tr>
-         </table>
+  <div id="cam-grid">
+    <div class="cam-item">
+      <iframe src="http://192.168.10.21:8050/6e6a8f21-bf3c-4da5-bd5d-0047299da84e.html" 
+              frameborder="no" scrolling="no" allowfullscreen="true"></iframe>
+      <iframe src="http://192.168.10.21:8050/6114753d-cb51-434d-b4dd-acdc32a7e6e7.html"
+              frameborder="0" scrolling="no" allowfullscreen="true"></iframe>
     </div>
-
-    <br>
+    <div class="cam-item">
+    </div>
+  </div>
+  <br>
 </body>
 </html>
